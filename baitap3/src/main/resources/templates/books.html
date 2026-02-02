@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách Sách</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e57c2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #1e3c72;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn-home, .btn-add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95em;
+        }
+        .btn-home {
+            background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        }
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(42, 82, 152, 0.4);
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #7e57c2 0%, #2a5298 100%);
+        }
+        .btn-add:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(126, 87, 194, 0.4);
+        }
+        .table-wrapper {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #333;
+        }
+        tr:hover {
+            background: #f8f8ff;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-edit, .btn-delete {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-size: 0.85em;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-edit {
+            background: linear-gradient(135deg, #FFC107 0%, #FF9800 100%);
+            color: #333;
+        }
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+        .btn-delete {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+        }
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.4);
+        }
+        .empty-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        .empty-icon {
+            font-size: 3em;
+            color: #d0d0d0;
+            margin-bottom: 20px;
+        }
+        .empty-message p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .empty-message a {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #7e57c2 0%, #2a5298 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s;
+        }
+        .empty-message a:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-book-open"></i> Danh sách Sách</h1>
+        <div class="header-buttons">
+            <a href="/" class="btn-home">
+                <i class="fas fa-home"></i> Trang chủ
+            </a>
+            <a th:href="@{/books/add}" class="btn-add">
+                <i class="fas fa-plus"></i> Thêm sách mới
+            </a>
+        </div>
+    </div>
+
+    <div th:if="${books.isEmpty()}" class="empty-message">
+        <div class="empty-icon">
+            <i class="fas fa-inbox"></i>
+        </div>
+        <p>Chưa có sách nào trong thư viện của bạn</p>
+        <a th:href="@{/books/add}">
+            <i class="fas fa-plus"></i> Thêm sách mới
+        </a>
+    </div>
+
+    <div th:if="${!books.isEmpty()}" class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th><i class="fas fa-hashtag"></i> ID</th>
+                    <th><i class="fas fa-book"></i> Tiêu đề</th>
+                    <th><i class="fas fa-user"></i> Tác giả</th>
+                    <th><i class="fas fa-cog"></i> Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="book : ${books}">
+                    <td th:text="${book.id}"></td>
+                    <td th:text="${book.title}"></td>
+                    <td th:text="${book.author}"></td>
+                    <td>
+                        <div class="actions">
+                            <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn-edit">
+                                <i class="fas fa-edit"></i> Sửa
+                            </a>
+                            <a th:href="@{/books/delete/{id}(id=${book.id})}"
+                               onclick="return confirm('Bạn có chắc muốn xóa sách này?')"
+                               class="btn-delete">
+                                <i class="fas fa-trash"></i> Xóa
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
