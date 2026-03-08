@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <title>Danh sách sách</title>
+    <style th:fragment="extra-styles">
+        .header-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .header-section h1 {
+            color: #667eea;
+            font-weight: 700;
+            margin: 0;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        .table-responsive-custom {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        table {
+            margin-bottom: 0;
+        }
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            border: none;
+        }
+        td {
+            vertical-align: middle;
+            border-color: #e0e0e0;
+        }
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-edit, .btn-delete {
+            padding: 6px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-edit {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-edit:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-delete:hover {
+            background-color: #da190b;
+            transform: translateY(-2px);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div layout:fragment="content">
+        <div class="header-section">
+            <h1>📖 Danh Sách Sách</h1>
+            <a th:href="@{/books/add}" class="btn-add">
+                <i class="fas fa-plus"></i> Thêm Sách Mới
+            </a>
+        </div>
+
+        <div th:if="${books.isEmpty()}" class="empty-state">
+            <i class="fas fa-book"></i>
+            <p>Chưa có sách nào. Hãy thêm sách mới để bắt đầu!</p>
+        </div>
+
+        <div th:if="!${books.isEmpty()}" class="table-responsive-custom">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-book-open"></i> Tiêu Đề</th>
+                        <th><i class="fas fa-user"></i> Tác Giả</th>
+                        <th><i class="fas fa-cogs"></i> Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="book : ${books}">
+                        <td><strong th:text="${book.id}"></strong></td>
+                        <td th:text="${book.title}"></td>
+                        <td th:text="${book.author}"></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a th:href="@{/books/edit/{id}(id=${book.id})}" class="btn-edit">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <a th:href="@{/books/delete/{id}(id=${book.id})}" class="btn-delete" onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+                                    <i class="fas fa-trash"></i> Xóa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
