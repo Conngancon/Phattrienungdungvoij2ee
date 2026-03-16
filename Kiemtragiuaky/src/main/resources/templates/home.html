@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="layout :: layout"
+      th:with="pageTitle='Home - Course Registration'">
+<div th:fragment="main-content">
+    <section class="hero-section mb-5">
+        <div class="container hero-content">
+            
+            <form class="d-flex justify-content-center align-items-center search-container mx-auto" th:action="@{/search}" method="get" style="max-width: 720px;">
+                <input class="form-control search-input me-2" type="search" name="keyword" placeholder="Search courses by title, lecturer or category..." th:value="${keyword}">
+                <button class="btn btn-search" type="submit"><i class="fas fa-search me-1"></i>Search</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="course-list mb-5">
+        <div class="container">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div>
+                    <h2 class="mb-1" th:if="${keyword != null && keyword != ''}">Search results for: "<span th:text="${keyword}"></span>"</h2>
+                    <h2 class="mb-1" th:if="${keyword == null || keyword == ''}">All Courses</h2>
+                </div>
+                <span class="text-muted mt-2 mt-md-0" th:if="${!#lists.isEmpty(courses)}" th:text="${'Total: ' + courses.size()}"></span>
+            </div>
+
+            <div class="row" th:if="${#lists.isEmpty(courses)}">
+                <div class="col-12 text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4 class="text-muted">No courses found</h4>
+                </div>
+            </div>
+
+            <div class="row" th:if="${!#lists.isEmpty(courses)}">
+                <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="course : ${courses}">
+                    <div class="card h-100 shadow-sm">
+                        <img th:src="${course.image != null ? course.image : 'https://via.placeholder.com/400x220?text=Course'}"
+                             class="card-img-top" alt="Course Image">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title" th:text="${course.name}">Course Name</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge badge-credits" th:text="${course.credits + ' Credits'}"></span>
+                                <span class="text-muted" th:text="${course.category != null ? course.category.name : 'Uncategorized'}"></span>
+                            </div>
+                            <p class="card-text text-muted mb-3">
+                                <i class="fas fa-chalkboard-teacher me-1"></i>
+                                <span th:text="${course.lecturer}">Lecturer</span>
+                            </p>
+                            <div class="mt-auto" sec:authorize="hasRole('STUDENT')">
+                                <a th:href="@{/enroll/{id}(id=${course.id})}" class="btn btn-enroll w-100">
+                                    <i class="fas fa-plus-circle me-1"></i>Enroll
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav th:if="${totalPages > 1}" class="d-flex justify-content-center mt-4">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                        <a class="page-link" th:href="@{${keyword != null && keyword != '' ? '/search' : '/home'}(page=${currentPage - 1}, keyword=${keyword})}">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:href="@{${keyword != null && keyword != '' ? '/search' : '/home'}(page=${i}, keyword=${keyword})}" th:text="${i + 1}">1</a>
+                    </li>
+                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                        <a class="page-link" th:href="@{${keyword != null && keyword != '' ? '/search' : '/home'}(page=${currentPage + 1}, keyword=${keyword})}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </section>
+</div>
+</html>

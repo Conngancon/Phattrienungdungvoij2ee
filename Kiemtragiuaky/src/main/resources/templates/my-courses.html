@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="layout :: layout"
+      th:with="pageTitle='My Courses - Course Registration'">
+<div th:fragment="main-content">
+    <section class="container py-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+            <div>
+                <h2 class="mb-1"><i class="fas fa-book-open me-2"></i>My Enrolled Courses</h2>
+                <p class="text-muted mb-0">Manage your active course enrollments and track progress.</p>
+            </div>
+            <a th:href="@{/home}" class="btn btn-outline-secondary mt-3 mt-md-0">
+                <i class="fas fa-arrow-left me-1"></i>Back to Courses
+            </a>
+        </div>
+
+        <div class="row" th:if="${#lists.isEmpty(enrollments)}">
+            <div class="col-12 text-center py-5">
+                <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">You haven't enrolled in any courses yet.</h4>
+                <a th:href="@{/home}" class="btn btn-primary mt-2">Browse Courses</a>
+            </div>
+        </div>
+
+        <div class="row" th:if="${!#lists.isEmpty(enrollments)}">
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4" th:each="enrollment : ${enrollments}">
+                <div class="card h-100 shadow-sm">
+                    <img th:src="${enrollment.course.image != null ? enrollment.course.image : 'https://via.placeholder.com/400x220?text=Course'}"
+                         class="card-img-top" alt="Course Image">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${enrollment.course.name}">Course Name</h5>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge badge-credits" th:text="${enrollment.course.credits + ' Credits'}"></span>
+                            <span class="text-muted" th:text="${enrollment.course.category != null ? enrollment.course.category.name : 'Uncategorized'}"></span>
+                        </div>
+                        <p class="card-text text-muted mb-3">
+                            <i class="fas fa-chalkboard-teacher me-1"></i>
+                            <span th:text="${enrollment.course.lecturer}">Lecturer</span>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="fas fa-calendar me-1"></i>Enrolled: <span th:text="${enrollment.enrollDate}"></span>
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</html>
